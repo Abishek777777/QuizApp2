@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import questions from "./data/questions";
+import Question from "./components/Question";
+import Result from "./components/Result";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // state
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  // check answer
+  const handleAnswer = (option) => {
+    if (option === questions[currentIndex].answer) {
+      setScore(score + 1);
+    }
+
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex < questions.length) {
+      setCurrentIndex(nextIndex);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  // restart quiz
+  const restartQuiz = () => {
+    setCurrentIndex(0);
+    setScore(0);
+    setShowResult(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <h1>React Quiz App</h1>
+
+      {!showResult ? (
+        <Question
+          data={questions[currentIndex]}
+          handleAnswer={handleAnswer}
+        />
+      ) : (
+        <Result
+          score={score}
+          total={questions.length}
+          restartQuiz={restartQuiz}
+        />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
